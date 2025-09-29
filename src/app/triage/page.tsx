@@ -20,8 +20,7 @@ export default function TriagePage() {
   const [direction, setDirection] = useState(1);
   const router = useRouter();
   const { setTriageResult } = useAuth();
-  const [symptom, setSymptom] = useState('');
-  const [symptomLabel, setSymptomLabel] = useState('');
+  const [symptom, setSymptom] = useState<{ text: string; value: number } | null>(null);
 
   const questions: TriageQuestion[] = triageQuestions;
 
@@ -29,6 +28,9 @@ export default function TriagePage() {
     setDirection(1);
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+      if (currentStep === 1) {
+        setCurrentStep(2);
+      }
     } else {
       handleSubmit();
     }
@@ -47,13 +49,12 @@ export default function TriagePage() {
   
   const handleSymptomSelect = (selectedSymptom: {text: string, value: number}) => {
     handleAnswer('symptom', selectedSymptom)
-    setSymptomLabel(selectedSymptom.text);
-    setSymptom(selectedSymptom.text.toLowerCase());
+    setSymptom(selectedSymptom);
     setCurrentStep(2);
   };
 
   const isNextDisabled = () => {
-    if (currentStep === 1 && !symptomLabel) return true;
+    if (currentStep === 1 && !symptom) return true;
     if (currentStep === 2 && !answers.q2) return true;
     if (currentStep === 3 && !answers.q3) return true;
     return false;
@@ -68,7 +69,7 @@ export default function TriagePage() {
       careLevel = 'Yellow';
     }
 
-    setTriageResult({ score, careLevel, symptom: symptomLabel, answers });
+    setTriageResult({ score, careLevel, symptom: symptom?.text, answers });
     router.push('/result');
   };
 
@@ -90,7 +91,7 @@ export default function TriagePage() {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <Step1 onAnswer={handleAnswer} value={symptom} onSymptomSelect={handleSymptomSelect} />;
+        return <Step1 onAnswer={handleAnswer} value={symptom?.text.toLowerCase()} onSymptomSelect={handleSymptomSelect} />;
       case 2:
         if (questions[0]) {
           return <Step2 onAnswer={handleAnswer} answers={answers} question={questions[0]} />;
@@ -143,4 +144,3 @@ export default function TriagePage() {
       </div>
     </div>
   );
-}
