@@ -8,7 +8,7 @@
  * - SymptomSuggestionOutput - The return type for the getSymptomSuggestions function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, geminiPro} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SymptomSuggestionInputSchema = z.object({
@@ -33,7 +33,7 @@ const symptomSuggestionPrompt = ai.definePrompt({
   name: 'symptomSuggestionPrompt',
   input: {schema: SymptomSuggestionInputSchema},
   output: {schema: SymptomSuggestionOutputSchema},
-  model: 'gemini-pro',
+  model: geminiPro,
   prompt: `You are a medical assistant providing symptom suggestions based on the user's description.
 
   Provide a list of potential symptoms related to the user's description.
