@@ -32,11 +32,11 @@ export default function TriagePage() {
     if (currentStep === 1 && symptom) {
       setIsLoading(true);
       try {
-        const result = await getDynamicQuestions({ symptom: symptomLabel || symptom });
+        const result = await getDynamicQuestions({ symptom: symptomLabel });
         const questions: TriageQuestion[] = result.questions.map(q => ({
           id: q.id,
           text: q.text,
-          type: q.type,
+          type: q.type as 'severity' | 'yes_no',
           options: q.options.map(opt => ({...opt})),
         }));
         setDynamicQuestions(questions);
@@ -108,7 +108,7 @@ export default function TriagePage() {
   return (
     <div className="container relative py-16 md:py-24">
       <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden w-full max-w-2xl mx-auto">
         <div className="relative h-[420px]">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
