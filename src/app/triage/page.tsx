@@ -25,16 +25,18 @@ export default function TriagePage() {
   const [dynamicQuestions, setDynamicQuestions] = useState<TriageQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [symptom, setSymptom] = useState('');
+  const [symptomLabel, setSymptomLabel] = useState('');
 
   const handleNext = async () => {
     setDirection(1);
     if (currentStep === 1 && symptom) {
       setIsLoading(true);
       try {
-        const result = await getDynamicQuestions({ symptom });
+        const result = await getDynamicQuestions({ symptom: symptomLabel || symptom });
         const questions: TriageQuestion[] = result.questions.map(q => ({
           id: q.id,
           text: q.text,
+          type: q.type,
           options: q.options.map(opt => ({...opt})),
         }));
         setDynamicQuestions(questions);
@@ -61,7 +63,8 @@ export default function TriagePage() {
 
   const handleAnswer = (questionId: string, option: { text: string; value: number; isCritical?: boolean }) => {
     if (questionId === 'symptom') {
-      setSymptom(option.text);
+      setSymptom(option.text.toLowerCase());
+      setSymptomLabel(option.text);
     }
     setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
   };
@@ -83,7 +86,7 @@ export default function TriagePage() {
       careLevel = 'Yellow';
     }
 
-    setTriageResult({ score, careLevel, symptom, answers });
+    setTriageResult({ score, careLevel, symptom: symptomLabel, answers });
     router.push('/result');
   };
 
@@ -105,34 +108,38 @@ export default function TriagePage() {
   return (
     <div className="container relative py-16 md:py-24">
       <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
-      <div className="relative h-[420px] overflow-hidden">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={currentStep}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: 'spring', stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 },
-            }}
-            className="w-full absolute"
-          >
-            {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} />}
-            {currentStep === 2 && dynamicQuestions[0] && <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />}
-            {currentStep === 3 && dynamicQuestions[1] && <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />}
-          </motion.div>
-        </AnimatePresence>
+      <div className="relative overflow-hidden">
+        <div className="relative h-[420px]">
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div
+              key={currentStep}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: 'spring', stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+              className="w-full absolute"
+            >
+              {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} />}
+              {currentStep === 2 && dynamicQuestions[0] && <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />}
+              {currentStep === 3 && dynamicQuestions[1] && <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
         {isLoading && (
-          <div className="w-full max-w-2xl mx-auto">
-            <Card>
-              <CardContent className="p-12 flex flex-col items-center justify-center">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <p className="mt-4 text-muted-foreground">Generating questions...</p>
-              </CardContent>
-            </Card>
+          <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+            <div className="w-full max-w-2xl mx-auto">
+                <Card>
+                  <CardContent className="p-12 flex flex-col items-center justify-center">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                    <p className="mt-4 text-muted-foreground">Generating questions...</p>
+                  </CardContent>
+                </Card>
+              </div>
           </div>
         )}
       </div>

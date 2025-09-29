@@ -60,7 +60,12 @@ export default function Step1({ onAnswer, value }: Step1Props) {
           <Combobox
             options={allOptions}
             value={value}
-            onChange={(selectedValue) => onAnswer('symptom', { text: selectedValue, value: 1 })}
+            onChange={(selectedValue) => {
+              const selectedOption = allOptions.find(opt => opt.value === selectedValue);
+              if (selectedOption) {
+                onAnswer('symptom', { text: selectedOption.label, value: 1 })
+              }
+            }}
             placeholder="e.g., Headache, fever, cough..."
             searchPlaceholder={isLoading ? 'AI is thinking...' : 'Search symptoms...'}
             emptyMessage="No symptoms found. Try a different search."
