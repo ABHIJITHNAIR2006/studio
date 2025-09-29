@@ -2,24 +2,24 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Bot, Zap } from 'lucide-react';
+import { ArrowRight, Stethoscope, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const features = [
   {
-    icon: <Bot className="h-8 w-8 text-primary" />,
-    title: 'AI-Powered Suggestions',
-    description: 'Our AI helps you accurately describe your symptoms for a better evaluation.',
+    icon: <Stethoscope className="h-8 w-8 text-primary" />,
+    title: 'Symptom Checker',
+    description: 'Describe your symptoms and answer a few simple questions to get an assessment.',
   },
   {
-    icon: <Zap className="h-8 w-8 text-primary" />,
-    title: 'Dynamic Questionnaires',
-    description: 'Get follow-up questions that are dynamically generated based on your unique symptoms.',
+    icon: <CheckCircle className="h-8 w-8 text-primary" />,
+    title: 'Static Questionnaires',
+    description: 'Answer a standard set of questions to help assess the severity of your symptoms.',
   },
   {
-    icon: <Bot className="h-8 w-8 text-primary" />,
-    title: 'Personalized Guidance',
-    description: 'Receive personalized care summaries and next steps, powered by Generative AI.',
+    icon: <Stethoscope className="h-8 w-8 text-primary" />,
+    title: 'Standardized Guidance',
+    description: 'Receive care summaries and next steps based on your answers.',
   },
 ];
 
@@ -31,10 +31,10 @@ export default function Home() {
         style={{ animationDelay: '0.2s', animationFillMode: 'backwards' }}
       >
         <h1 className="text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl">
-          Intelligent Symptom Triage
+          Symptom Triage
         </h1>
         <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Get instant, AI-powered guidance on your health concerns. TriageNow Pro helps you understand
+          Get guidance on your health concerns. TriageNow helps you understand
           your symptoms and find the right care.
         </p>
       </div>
@@ -51,7 +51,7 @@ export default function Home() {
       </div>
       <div className="mt-20 w-full max-w-5xl">
         <h2 className="text-3xl font-bold tracking-tight text-center">
-          How AI Assists You
+          How It Works
         </h2>
         <div className="mt-10 grid gap-8 md:grid-cols-3">
           {features.map((feature, index) => (

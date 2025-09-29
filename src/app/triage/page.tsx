@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/use-auth';
@@ -9,10 +9,8 @@ import Step1 from '@/components/triage/step-1';
 import Step2 from '@/components/triage/step-2';
 import Step3 from '@/components/triage/step-3';
 import { Button } from '@/components/ui/button';
-import { TriageQuestion } from '@/lib/data';
-import { getDynamicQuestions } from '@/ai/flows/generate-questions-flow';
-import { Loader2 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { triageQuestions } from '@/lib/data';
+import type { TriageQuestion } from '@/lib/data';
 
 const totalSteps = 3;
 
@@ -22,19 +20,14 @@ export default function TriagePage() {
   const [direction, setDirection] = useState(1);
   const router = useRouter();
   const { setTriageResult } = useAuth();
-  const [dynamicQuestions, setDynamicQuestions] = useState<TriageQuestion[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [symptom, setSymptom] = useState('');
   const [symptomLabel, setSymptomLabel] = useState('');
 
-  const handleNext = async () => {
+  const questions: TriageQuestion[] = triageQuestions;
+
+  const handleNext = () => {
     setDirection(1);
-    if (currentStep === 1) {
-      // Questions are fetched on symptom select, so we just move to the next step
-      if (symptomLabel && dynamicQuestions.length > 0) {
-        setCurrentStep(currentStep + 1);
-      }
-    } else if (currentStep < totalSteps) {
+    if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
       handleSubmit();
@@ -52,29 +45,14 @@ export default function TriagePage() {
     setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
   };
   
-  const handleSymptomSelect = async (selectedSymptom: {text: string, value: number}) => {
+  const handleSymptomSelect = (selectedSymptom: {text: string, value: number}) => {
     handleAnswer('symptom', selectedSymptom)
     setSymptomLabel(selectedSymptom.text);
-    setIsLoading(true);
-    try {
-      const result = await getDynamicQuestions({ symptom: selectedSymptom.text });
-      const questions: TriageQuestion[] = result.questions.map(q => ({
-        id: q.id,
-        text: q.text,
-        type: q.type as 'severity' | 'yes_no',
-        options: q.options.map(opt => ({...opt})),
-      }));
-      setDynamicQuestions(questions);
-      setCurrentStep(2);
-    } catch (error) {
-      console.error('Failed to get dynamic questions', error);
-    } finally {
-      setIsLoading(false);
-    }
+    setSymptom(selectedSymptom.text.toLowerCase());
+    setCurrentStep(2);
   };
 
   const isNextDisabled = () => {
-    if (isLoading) return true;
     if (currentStep === 1 && !symptomLabel) return true;
     if (currentStep === 2 && !answers.q2) return true;
     if (currentStep === 3 && !answers.q3) return true;
@@ -114,13 +92,13 @@ export default function TriagePage() {
       case 1:
         return <Step1 onAnswer={handleAnswer} value={symptom} onSymptomSelect={handleSymptomSelect} />;
       case 2:
-        if (dynamicQuestions[0]) {
-          return <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />;
+        if (questions[0]) {
+          return <Step2 onAnswer={handleAnswer} answers={answers} question={questions[0]} />;
         }
         return null;
       case 3:
-        if (dynamicQuestions[1]) {
-          return <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />;
+        if (questions[1]) {
+          return <Step3 onAnswer={handleAnswer} answers={answers} question={questions[1]} />;
         }
         return null;
       default:
@@ -147,18 +125,6 @@ export default function TriagePage() {
               }}
               className="w-full absolute"
             >
-               {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-background/50 z-10">
-                  <div className="w-full max-w-2xl mx-auto">
-                      <Card>
-                        <CardContent className="p-12 flex flex-col items-center justify-center">
-                          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                          <p className="mt-4 text-muted-foreground">Generating questions...</p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                </div>
-              )}
               {renderStep()}
             </motion.div>
           </AnimatePresence>
@@ -167,11 +133,10 @@ export default function TriagePage() {
 
       <div className="fixed bottom-0 left-0 w-full bg-background border-t p-4">
         <div className="container flex justify-between items-center">
-          <Button variant="outline" onClick={handleBack} disabled={currentStep === 1 || isLoading}>
+          <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}>
             Back
           </Button>
           <Button onClick={handleNext} disabled={isNextDisabled()}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {currentStep === totalSteps ? 'Finish & See Results' : 'Next'}
           </Button>
         </div>

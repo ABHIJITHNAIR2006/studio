@@ -19,12 +19,35 @@ export const symptoms: Symptom[] = [
 export type TriageQuestion = {
   id: string;
   text: string;
+  type: 'severity' | 'yes_no';
   options: {
     text: string;
     value: number;
     isCritical?: boolean;
   }[];
 };
+
+export const triageQuestions: TriageQuestion[] = [
+  {
+    id: 'q2',
+    text: 'How would you rate the severity of your symptom?',
+    type: 'severity',
+    options: [
+      { text: 'Mild', value: 1 },
+      { text: 'Moderate', value: 3 },
+      { text: 'Severe', value: 5, isCritical: true },
+    ],
+  },
+  {
+    id: 'q3',
+    text: 'Have you experienced this symptom before?',
+    type: 'yes_no',
+    options: [
+      { text: 'Yes', value: 1 },
+      { text: 'No', value: 0 },
+    ],
+  },
+];
 
 
 export type Recommendation = {
