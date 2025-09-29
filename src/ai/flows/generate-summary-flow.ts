@@ -5,7 +5,7 @@
  * - getAiSummary - A function that takes user symptoms and answers to generate a summary.
  */
 
-import { ai, geminiPro } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { AiSummaryInput, AiSummaryOutput, AiSummaryInputSchema, AiSummaryOutputSchema } from '@/lib/types';
 
@@ -18,7 +18,6 @@ const generateSummaryPrompt = ai.definePrompt({
   name: 'generateSummaryPrompt',
   input: { schema: AiSummaryInputSchema },
   output: { schema: AiSummaryOutputSchema },
-  model: geminiPro,
   prompt: `You are a medical assistant AI. Your task is to provide a personalized, non-emergency care summary and next steps based on a user's triage responses.
 
 Do not provide emergency advice. The user has already been assessed as non-critical.

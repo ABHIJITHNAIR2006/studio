@@ -1,10 +1,8 @@
-import {genkit, model} from 'genkit';
+import {genkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 import {config} from 'dotenv';
 
 config({path: '.env.local'});
-
-export const geminiPro = model('googleai/gemini-pro');
 
 export const ai = genkit({
   plugins: [
@@ -13,3 +11,5 @@ export const ai = genkit({
     }),
   ],
 });
+
+export const geminiPro = ai.model('googleai/gemini-pro');

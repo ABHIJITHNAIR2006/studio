@@ -5,7 +5,7 @@
  * - getDynamicQuestions - A function that takes a symptom and returns two relevant follow-up questions.
  */
 
-import { ai, geminiPro } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import type { DynamicQuestionsInput, DynamicQuestionsOutput, DynamicQuestionsInputSchema, DynamicQuestionsOutputSchema } from '@/lib/types';
 import { DynamicQuestionsInputSchema as InputSchema, DynamicQuestionsOutputSchema as OutputSchema } from '@/lib/types';
@@ -18,7 +18,6 @@ const generateQuestionsPrompt = ai.definePrompt({
   name: 'generateQuestionsPrompt',
   input: { schema: InputSchema },
   output: { schema: OutputSchema },
-  model: geminiPro,
   prompt: `You are a medical assistant responsible for generating follow-up questions for a symptom triage app.
 Based on the user's initial symptom, generate two relevant follow-up questions.
 
