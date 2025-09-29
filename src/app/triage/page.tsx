@@ -26,21 +26,18 @@ export default function TriagePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [symptom, setSymptom] = useState('');
   const [symptomLabel, setSymptomLabel] = useState('');
-  const [isFetchingQuestions, setIsFetchingQuestions] = useState(false);
 
   useEffect(() => {
-    if (isFetchingQuestions && dynamicQuestions.length > 0) {
+    if (dynamicQuestions.length > 0 && currentStep === 1 && !isLoading) {
       setCurrentStep(2);
-      setIsFetchingQuestions(false);
     }
-  }, [dynamicQuestions, isFetchingQuestions]);
+  }, [dynamicQuestions, currentStep, isLoading]);
 
 
   const handleNext = async () => {
     setDirection(1);
     if (currentStep === 1 && symptomLabel) {
       setIsLoading(true);
-      setIsFetchingQuestions(true);
       try {
         const result = await getDynamicQuestions({ symptom: symptomLabel });
         const questions: TriageQuestion[] = result.questions.map(q => ({
@@ -52,7 +49,6 @@ export default function TriagePage() {
         setDynamicQuestions(questions);
       } catch (error) {
         console.error('Failed to get dynamic questions', error);
-        setIsFetchingQuestions(false);
       } finally {
         setIsLoading(false);
       }
@@ -143,7 +139,7 @@ export default function TriagePage() {
             </motion.div>
           </AnimatePresence>
         </div>
-        {isLoading && (
+        {isLoading && currentStep === 1 && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/50">
             <div className="w-full max-w-2xl mx-auto">
                 <Card>
@@ -159,11 +155,11 @@ export default function TriagePage() {
 
       <div className="fixed bottom-0 left-0 w-full bg-background border-t p-4">
         <div className="container flex justify-between items-center">
-          <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}>
+          <Button variant="outline" onClick={handleBack} disabled={currentStep === 1 || isLoading}>
             Back
           </Button>
           <Button onClick={handleNext} disabled={isNextDisabled()}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && currentStep === 1 && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {currentStep === totalSteps ? 'Finish & See Results' : 'Next'}
           </Button>
         </div>
