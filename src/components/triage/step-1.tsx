@@ -10,9 +10,10 @@ import debounce from 'lodash.debounce';
 type Step1Props = {
   onAnswer: (questionId: string, option: { text: string; value: number }) => void;
   value: string | undefined;
+  onSymptomSelect: () => void;
 };
 
-export default function Step1({ onAnswer, value }: Step1Props) {
+export default function Step1({ onAnswer, value, onSymptomSelect }: Step1Props) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,6 +65,7 @@ export default function Step1({ onAnswer, value }: Step1Props) {
               const selectedOption = allOptions.find(opt => opt.value === selectedValue);
               if (selectedOption) {
                 onAnswer('symptom', { text: selectedOption.label, value: 1 })
+                onSymptomSelect();
               }
             }}
             placeholder="e.g., Headache, fever, cough..."

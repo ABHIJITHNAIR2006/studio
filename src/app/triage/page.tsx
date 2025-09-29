@@ -29,7 +29,7 @@ export default function TriagePage() {
 
   const handleNext = async () => {
     setDirection(1);
-    if (currentStep === 1 && symptom) {
+    if (currentStep === 1 && symptomLabel) {
       setIsLoading(true);
       try {
         const result = await getDynamicQuestions({ symptom: symptomLabel });
@@ -71,7 +71,7 @@ export default function TriagePage() {
 
   const isNextDisabled = () => {
     if (isLoading) return true;
-    if (currentStep === 1 && !symptom) return true;
+    if (currentStep === 1 && !symptomLabel) return true;
     if (currentStep === 2 && !answers.q2) return true;
     if (currentStep === 3 && !answers.q3) return true;
     return false;
@@ -124,7 +124,7 @@ export default function TriagePage() {
               }}
               className="w-full absolute"
             >
-              {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} />}
+              {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} onSymptomSelect={handleNext} />}
               {currentStep === 2 && dynamicQuestions[0] && <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />}
               {currentStep === 3 && dynamicQuestions[1] && <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />}
             </motion.div>

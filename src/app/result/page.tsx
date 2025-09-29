@@ -6,7 +6,7 @@ import { recommendations } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Download, Video, Bot } from 'lucide-react';
+import { CheckCircle2, Download, Video, Bot, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { getAiSummary } from '@/ai/flows/generate-summary-flow';
@@ -110,10 +110,19 @@ export default function ResultPage() {
               )}
             </div>
 
-            { (careLevel === 'Yellow' || careLevel === 'Green') && !isLoading && (
+            { (careLevel === 'Yellow' || careLevel === 'Green') && (
               <div className="flex items-center justify-center text-sm text-muted-foreground pt-2">
-                <Bot className="h-4 w-4 mr-2" />
-                <p>Personalized guidance powered by Generative AI. Always consult a healthcare professional.</p>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <p>Generating personalized guidance...</p>
+                  </>
+                ) : (
+                  <>
+                    <Bot className="h-4 w-4 mr-2" />
+                    <p>Personalized guidance powered by Generative AI. Always consult a healthcare professional.</p>
+                  </>
+                )}
               </div>
             )}
 
