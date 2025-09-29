@@ -33,7 +33,7 @@ const symptomSuggestionPrompt = ai.definePrompt({
   name: 'symptomSuggestionPrompt',
   input: {schema: SymptomSuggestionInputSchema},
   output: {schema: SymptomSuggestionOutputSchema},
-  model: 'googleai/gemini-pro',
+  model: 'gemini-pro',
   prompt: `You are a medical assistant providing symptom suggestions based on the user's description.
 
   Provide a list of potential symptoms related to the user's description.

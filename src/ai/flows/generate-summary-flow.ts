@@ -18,7 +18,7 @@ const generateSummaryPrompt = ai.definePrompt({
   name: 'generateSummaryPrompt',
   input: { schema: AiSummaryInputSchema },
   output: { schema: AiSummaryOutputSchema },
-  model: 'googleai/gemini-pro',
+  model: 'gemini-pro',
   prompt: `You are a medical assistant AI. Your task is to provide a personalized, non-emergency care summary and next steps based on a user's triage responses.
 
 Do not provide emergency advice. The user has already been assessed as non-critical.

@@ -18,7 +18,7 @@ const generateQuestionsPrompt = ai.definePrompt({
   name: 'generateQuestionsPrompt',
   input: { schema: InputSchema },
   output: { schema: OutputSchema },
-  model: 'googleai/gemini-pro',
+  model: 'gemini-pro',
   prompt: `You are a medical assistant responsible for generating follow-up questions for a symptom triage app.
 Based on the user's initial symptom, generate two relevant follow-up questions.
 
