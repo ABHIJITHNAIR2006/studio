@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, Download, Video, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { getAiSummary, AiSummaryOutput } from '@/ai/flows/generate-summary-flow';
+import { getAiSummary } from '@/ai/flows/generate-summary-flow';
+import type { AiSummaryOutput } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ResultPage() {

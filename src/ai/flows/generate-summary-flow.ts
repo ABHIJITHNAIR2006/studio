@@ -3,24 +3,12 @@
  * @fileOverview Generates a personalized care summary using AI.
  *
  * - getAiSummary - A function that takes user symptoms and answers to generate a summary.
- * - AiSummaryInput - The input type for the getAiSummary function.
- * - AiSummaryOutput - The return type for the getAiSummary function.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { AiSummaryInput, AiSummaryOutput, AiSummaryInputSchema, AiSummaryOutputSchema } from '@/lib/types';
 
-export const AiSummaryInputSchema = z.object({
-  symptom: z.string().describe('The primary symptom of the user.'),
-  answers: z.record(z.any()).describe('The user\'s answers to the triage questions.'),
-});
-export type AiSummaryInput = z.infer<typeof AiSummaryInputSchema>;
-
-export const AiSummaryOutputSchema = z.object({
-  summary: z.string().describe('A personalized, non-emergency care summary.'),
-  nextSteps: z.array(z.string()).describe('A list of recommended next steps.'),
-});
-export type AiSummaryOutput = z.infer<typeof AiSummaryOutputSchema>;
 
 export async function getAiSummary(input: AiSummaryInput): Promise<AiSummaryOutput> {
   return generateSummaryFlow(input);
