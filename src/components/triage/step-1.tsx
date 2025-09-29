@@ -50,13 +50,13 @@ export default function Step1({ onAnswer, value }: Step1Props) {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <Card>
-        <CardHeader>
-          <CardTitle>What is your primary symptom?</CardTitle>
-          <CardDescription>
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-bold">What is your primary symptom?</CardTitle>
+          <CardDescription className="text-lg text-muted-foreground pt-2">
             Start typing your symptom below. Our AI will help you find the right term.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-6 md:px-12 py-6">
           <Combobox
             options={allOptions}
             value={value}
