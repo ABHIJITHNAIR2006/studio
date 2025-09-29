@@ -1,23 +1,22 @@
 'use client';
 
-import { triageQuestions } from '@/lib/data';
+import { TriageQuestion } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 type Step2Props = {
   onAnswer: (questionId: string, option: { text: string; value: number; isCritical?: boolean }) => void;
   answers: Record<string, any>;
+  question: TriageQuestion;
 };
 
-export default function Step2({ onAnswer, answers }: Step2Props) {
-  const question = triageQuestions.step2[0];
-
+export default function Step2({ onAnswer, answers, question }: Step2Props) {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <Card>
         <CardHeader>
           <CardTitle>{question.text}</CardTitle>
-          <CardDescription>Select the option that best describes your symptom&apos;s severity.</CardDescription>
+          <CardDescription>Select the option that best describes your situation.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

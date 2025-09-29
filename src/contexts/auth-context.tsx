@@ -9,6 +9,8 @@ interface User {
 interface TriageResult {
   score: number;
   careLevel: 'Green' | 'Yellow' | 'Red';
+  symptom?: string;
+  answers?: Record<string, any>;
 }
 
 interface AuthContextType {
@@ -36,6 +38,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem('triage-user');
       }
     }
+    const storedResult = sessionStorage.getItem('triage-result');
+    if (storedResult) {
+      try {
+        setTriageResult(JSON.parse(storedResult));
+      } catch (e) {
+        sessionStorage.removeItem('triage-result');
+      }
+    }
     setLoading(false);
   }, []);
 
@@ -49,6 +59,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setTriageResult(null);
     localStorage.removeItem('triage-user');
+    sessionStorage.removeItem('triage-result');
+  };
+
+  const handleSetTriageResult = (result: TriageResult | null) => {
+    setTriageResult(result);
+    if (result) {
+      sessionStorage.setItem('triage-result', JSON.stringify(result));
+    } else {
+      sessionStorage.removeItem('triage-result');
+    }
   };
 
   const value = {
@@ -57,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login,
     logout,
     triageResult,
-    setTriageResult,
+    setTriageResult: handleSetTriageResult,
   };
 
   if (loading) {

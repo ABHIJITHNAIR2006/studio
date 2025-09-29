@@ -9,7 +9,10 @@ import Step1 from '@/components/triage/step-1';
 import Step2 from '@/components/triage/step-2';
 import Step3 from '@/components/triage/step-3';
 import { Button } from '@/components/ui/button';
-import { triageQuestions } from '@/lib/data';
+import { TriageQuestion } from '@/lib/data';
+import { getDynamicQuestions } from '@/ai/flows/generate-questions-flow';
+import { Loader2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 const totalSteps = 3;
 
@@ -19,10 +22,30 @@ export default function TriagePage() {
   const [direction, setDirection] = useState(1);
   const router = useRouter();
   const { setTriageResult } = useAuth();
+  const [dynamicQuestions, setDynamicQuestions] = useState<TriageQuestion[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [symptom, setSymptom] = useState('');
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setDirection(1);
-    if (currentStep < totalSteps) {
+    if (currentStep === 1 && symptom) {
+      setIsLoading(true);
+      try {
+        const result = await getDynamicQuestions({ symptom });
+        const questions: TriageQuestion[] = result.questions.map(q => ({
+          id: q.id,
+          text: q.text,
+          options: q.options.map(opt => ({...opt})),
+        }));
+        setDynamicQuestions(questions);
+        setCurrentStep(2);
+      } catch (error) {
+        console.error('Failed to get dynamic questions', error);
+        // Optionally handle error, e.g. show a toast
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
       handleSubmit();
@@ -37,13 +60,17 @@ export default function TriagePage() {
   };
 
   const handleAnswer = (questionId: string, option: { text: string; value: number; isCritical?: boolean }) => {
+    if (questionId === 'symptom') {
+      setSymptom(option.text);
+    }
     setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
   };
 
   const isNextDisabled = () => {
-    if (currentStep === 1 && !answers.symptom) return true;
-    if (currentStep === 2 && !answers.q1) return true;
-    if (currentStep === 3 && (triageQuestions.step3.some(q => !answers[q.id]))) return true;
+    if (isLoading) return true;
+    if (currentStep === 1 && !symptom) return true;
+    if (currentStep === 2 && !answers.q2) return true;
+    if (currentStep === 3 && !answers.q3) return true;
     return false;
   };
 
@@ -56,7 +83,7 @@ export default function TriagePage() {
       careLevel = 'Yellow';
     }
 
-    setTriageResult({ score, careLevel });
+    setTriageResult({ score, careLevel, symptom, answers });
     router.push('/result');
   };
 
@@ -92,11 +119,22 @@ export default function TriagePage() {
           }}
           className="w-full absolute"
         >
-          {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={answers.symptom?.value.toString()} />}
-          {currentStep === 2 && <Step2 onAnswer={handleAnswer} answers={answers} />}
-          {currentStep === 3 && <Step3 onAnswer={handleAnswer} answers={answers} />}
+          {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} />}
+          {currentStep === 2 && dynamicQuestions[0] && <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />}
+          {currentStep === 3 && dynamicQuestions[1] && <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />}
         </motion.div>
       </AnimatePresence>
+      {isLoading && (
+        <div className="w-full max-w-2xl mx-auto">
+          <Card>
+            <CardContent className="p-12 flex flex-col items-center justify-center">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+              <p className="mt-4 text-muted-foreground">Generating questions...</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
 
       <div className="fixed bottom-0 left-0 w-full bg-background border-t p-4">
         <div className="container flex justify-between items-center">
@@ -104,6 +142,7 @@ export default function TriagePage() {
             Back
           </Button>
           <Button onClick={handleNext} disabled={isNextDisabled()}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {currentStep === totalSteps ? 'Finish & See Results' : 'Next'}
           </Button>
         </div>

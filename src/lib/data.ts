@@ -26,37 +26,6 @@ export type TriageQuestion = {
   }[];
 };
 
-export const triageQuestions: { [key: string]: TriageQuestion[] } = {
-  step2: [
-    {
-      id: 'q1',
-      text: 'How would you rate the severity?',
-      options: [
-        { text: 'Mild', value: 1 },
-        { text: 'Moderate', value: 3 },
-        { text: 'Severe', value: 5, isCritical: true },
-      ],
-    },
-  ],
-  step3: [
-    {
-      id: 'q2',
-      text: 'Are you experiencing shortness of breath?',
-      options: [
-        { text: 'Yes', value: 5, isCritical: true },
-        { text: 'No', value: 0 },
-      ],
-    },
-    {
-      id: 'q3',
-      text: 'Do you have a persistent fever?',
-      options: [
-        { text: 'Yes', value: 3 },
-        { text: 'No', value: 0 },
-      ],
-    },
-  ],
-};
 
 export type Recommendation = {
   careLevel: 'Green' | 'Yellow' | 'Red';
