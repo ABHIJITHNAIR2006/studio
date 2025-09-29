@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/hooks/use-auth';
@@ -26,11 +26,21 @@ export default function TriagePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [symptom, setSymptom] = useState('');
   const [symptomLabel, setSymptomLabel] = useState('');
+  const [isFetchingQuestions, setIsFetchingQuestions] = useState(false);
+
+  useEffect(() => {
+    if (isFetchingQuestions && dynamicQuestions.length > 0) {
+      setCurrentStep(2);
+      setIsFetchingQuestions(false);
+    }
+  }, [dynamicQuestions, isFetchingQuestions]);
+
 
   const handleNext = async () => {
     setDirection(1);
     if (currentStep === 1 && symptomLabel) {
       setIsLoading(true);
+      setIsFetchingQuestions(true);
       try {
         const result = await getDynamicQuestions({ symptom: symptomLabel });
         const questions: TriageQuestion[] = result.questions.map(q => ({
@@ -40,10 +50,9 @@ export default function TriagePage() {
           options: q.options.map(opt => ({...opt})),
         }));
         setDynamicQuestions(questions);
-        setCurrentStep(2);
       } catch (error) {
         console.error('Failed to get dynamic questions', error);
-        // Optionally handle error, e.g. show a toast
+        setIsFetchingQuestions(false);
       } finally {
         setIsLoading(false);
       }
@@ -67,6 +76,10 @@ export default function TriagePage() {
       setSymptomLabel(option.text);
     }
     setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
+  };
+  
+  const handleSymptomSelect = () => {
+    handleNext();
   };
 
   const isNextDisabled = () => {
@@ -124,7 +137,7 @@ export default function TriagePage() {
               }}
               className="w-full absolute"
             >
-              {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} onSymptomSelect={handleNext} />}
+              {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} onSymptomSelect={handleSymptomSelect} />}
               {currentStep === 2 && dynamicQuestions[0] && <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />}
               {currentStep === 3 && dynamicQuestions[1] && <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />}
             </motion.div>
