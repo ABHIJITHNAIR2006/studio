@@ -8,7 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Stethoscope } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Info, Stethoscope } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,22 +21,19 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password) {
-      if (password === 'password') {
-        login(email);
-        router.push('/triage');
-      } else {
-        toast({
-          variant: 'destructive',
-          title: 'Login Failed',
-          description: 'Incorrect password. Please try again.',
-        });
-      }
+    if (email === 'demo@triage.app' && password === 'demouser123') {
+      login(email);
+      toast({
+        variant: 'success',
+        title: 'Login Successful',
+        description: 'Welcome back!',
+      });
+      router.push('/triage');
     } else {
       toast({
         variant: 'destructive',
-        title: 'Login Failed',
-        description: 'Please enter both email and password.',
+        title: 'Invalid Demo Credentials',
+        description: 'Please use the provided demo credentials.',
       });
     }
   };
@@ -50,13 +49,22 @@ export default function LoginPage() {
           <CardDescription>Enter your credentials to access your account.</CardDescription>
         </CardHeader>
         <CardContent>
+          <Alert className="mb-4 bg-accent/20 border-accent/30">
+            <Info className="h-4 w-4 text-accent" />
+            <AlertTitle className="font-semibold text-accent">Demo Login</AlertTitle>
+            <AlertDescription className="text-sm">
+              <span className="font-semibold">Email:</span> demo@triage.app
+              <br />
+              <span className="font-semibold">Password:</span> demouser123
+            </AlertDescription>
+          </Alert>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="demo@triage.app"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -70,7 +78,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="password"
+                placeholder="demouser123"
               />
             </div>
             <Button type="submit" className="w-full">
@@ -78,10 +86,23 @@ export default function LoginPage() {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <a href="#" className="underline">
-              Sign up
-            </a>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span
+                    className="text-muted-foreground cursor-not-allowed"
+                  >
+                    Don&apos;t have an account?{' '}
+                    <span className="underline opacity-50">
+                      Sign up
+                    </span>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Sign-up is disabled for this demo.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardContent>
       </Card>
