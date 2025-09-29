@@ -20,7 +20,7 @@ export default function TriagePage() {
   const [direction, setDirection] = useState(1);
   const router = useRouter();
   const { setTriageResult } = useAuth();
-  const [symptom, setSymptom] = useState<{ text: string; value: number } | null>(null);
+  const [symptom, setSymptom] = useState<string | null>(null);
 
   const questions: TriageQuestion[] = triageQuestions;
 
@@ -49,7 +49,7 @@ export default function TriagePage() {
   
   const handleSymptomSelect = (selectedSymptom: {text: string, value: number}) => {
     handleAnswer('symptom', selectedSymptom)
-    setSymptom(selectedSymptom);
+    setSymptom(selectedSymptom.text);
     setCurrentStep(2);
   };
 
@@ -69,7 +69,7 @@ export default function TriagePage() {
       careLevel = 'Yellow';
     }
 
-    setTriageResult({ score, careLevel, symptom: symptom?.text, answers });
+    setTriageResult({ score, careLevel, symptom: symptom, answers });
     router.push('/result');
   };
 
@@ -91,7 +91,7 @@ export default function TriagePage() {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <Step1 onAnswer={handleAnswer} value={symptom?.text.toLowerCase()} onSymptomSelect={handleSymptomSelect} />;
+        return <Step1 onAnswer={handleAnswer} value={symptom?.toLowerCase()} onSymptomSelect={handleSymptomSelect} />;
       case 2:
         if (questions[0]) {
           return <Step2 onAnswer={handleAnswer} answers={answers} question={questions[0]} />;
@@ -144,3 +144,4 @@ export default function TriagePage() {
       </div>
     </div>
   );
+}
