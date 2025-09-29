@@ -3,36 +3,12 @@
  * @fileOverview Generates dynamic triage questions based on a user's initial symptom.
  *
  * - getDynamicQuestions - A function that takes a symptom and returns two relevant follow-up questions.
- * - DynamicQuestionsInput - The input type for the getDynamicQuestions function.
- * - DynamicQuestionsOutput - The return type for the getDynamicQuestions function.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-
-export const DynamicQuestionsInputSchema = z.object({
-  symptom: z.string().describe('The initial symptom reported by the user.'),
-});
-export type DynamicQuestionsInput = z.infer<typeof DynamicQuestionsInputSchema>;
-
-const QuestionSchema = z.object({
-  id: z.string().describe('A unique ID for the question (e.g., "q2", "q3").'),
-  text: z.string().describe('The question text.'),
-  type: z.enum(['severity', 'yes_no']).describe('The type of question.'),
-  options: z.array(
-    z.object({
-      text: z.string(),
-      value: z.number(),
-      isCritical: z.boolean().optional(),
-    })
-  ).describe('The options for the question.'),
-});
-
-export const DynamicQuestionsOutputSchema = z.object({
-  questions: z.array(QuestionSchema).length(2).describe('An array of exactly two follow-up questions.'),
-});
-export type DynamicQuestionsOutput = z.infer<typeof DynamicQuestionsOutputSchema>;
-
+import type { DynamicQuestionsInput, DynamicQuestionsOutput, DynamicQuestionsInputSchema, DynamicQuestionsOutputSchema } from '@/lib/types';
+import { DynamicQuestionsInputSchema as InputSchema, DynamicQuestionsOutputSchema as OutputSchema } from '@/lib/types';
 
 export async function getDynamicQuestions(input: DynamicQuestionsInput): Promise<DynamicQuestionsOutput> {
   return generateQuestionsFlow(input);
@@ -40,8 +16,8 @@ export async function getDynamicQuestions(input: DynamicQuestionsInput): Promise
 
 const generateQuestionsPrompt = ai.definePrompt({
   name: 'generateQuestionsPrompt',
-  input: { schema: DynamicQuestionsInputSchema },
-  output: { schema: DynamicQuestionsOutputSchema },
+  input: { schema: InputSchema },
+  output: { schema: OutputSchema },
   prompt: `You are a medical assistant responsible for generating follow-up questions for a symptom triage app.
 Based on the user's initial symptom, generate two relevant follow-up questions.
 
@@ -63,8 +39,8 @@ Generate the two questions.`,
 const generateQuestionsFlow = ai.defineFlow(
   {
     name: 'generateQuestionsFlow',
-    inputSchema: DynamicQuestionsInputSchema,
-    outputSchema: DynamicQuestionsOutputSchema,
+    inputSchema: InputSchema,
+    outputSchema: OutputSchema,
   },
   async (input) => {
     const { output } = await generateQuestionsPrompt(input);
