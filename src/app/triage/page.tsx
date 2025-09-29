@@ -27,13 +27,6 @@ export default function TriagePage() {
   const [symptom, setSymptom] = useState('');
   const [symptomLabel, setSymptomLabel] = useState('');
 
-  useEffect(() => {
-    if (dynamicQuestions.length > 0 && currentStep === 1 && !isLoading) {
-      setCurrentStep(2);
-    }
-  }, [dynamicQuestions, currentStep, isLoading]);
-
-
   const handleNext = async () => {
     setDirection(1);
     if (currentStep === 1 && symptomLabel) {
@@ -47,6 +40,7 @@ export default function TriagePage() {
           options: q.options.map(opt => ({...opt})),
         }));
         setDynamicQuestions(questions);
+        setCurrentStep(2);
       } catch (error) {
         console.error('Failed to get dynamic questions', error);
       } finally {
@@ -74,7 +68,8 @@ export default function TriagePage() {
     setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
   };
   
-  const handleSymptomSelect = () => {
+  const handleSymptomSelect = (selectedSymptom: {text: string, value: number}) => {
+    handleAnswer('symptom', selectedSymptom)
     handleNext();
   };
 
@@ -114,11 +109,30 @@ export default function TriagePage() {
     }),
   };
 
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return <Step1 onAnswer={handleAnswer} value={symptom} onSymptomSelect={handleSymptomSelect} />;
+      case 2:
+        if (dynamicQuestions[0]) {
+          return <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />;
+        }
+        return null;
+      case 3:
+        if (dynamicQuestions[1]) {
+          return <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />;
+        }
+        return null;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="container relative py-16 md:py-24">
       <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
       <div className="relative overflow-hidden w-full max-w-2xl mx-auto">
-        <div className="relative h-[420px]">
+        <div className="relative h-[420px] flex items-center justify-center">
           <AnimatePresence initial={false} custom={direction}>
             <motion.div
               key={currentStep}
@@ -133,9 +147,7 @@ export default function TriagePage() {
               }}
               className="w-full absolute"
             >
-              {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} onSymptomSelect={handleSymptomSelect} />}
-              {currentStep === 2 && dynamicQuestions[0] && <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />}
-              {currentStep === 3 && dynamicQuestions[1] && <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />}
+              {renderStep()}
             </motion.div>
           </AnimatePresence>
         </div>
