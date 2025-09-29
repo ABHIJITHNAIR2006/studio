@@ -103,38 +103,39 @@ export default function TriagePage() {
   };
 
   return (
-    <div className="container relative py-16 md:py-24 overflow-x-hidden">
+    <div className="container relative py-16 md:py-24">
       <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
-      <AnimatePresence initial={false} custom={direction}>
-        <motion.div
-          key={currentStep}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{
-            x: { type: 'spring', stiffness: 300, damping: 30 },
-            opacity: { duration: 0.2 },
-          }}
-          className="w-full absolute"
-        >
-          {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} />}
-          {currentStep === 2 && dynamicQuestions[0] && <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />}
-          {currentStep === 3 && dynamicQuestions[1] && <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />}
-        </motion.div>
-      </AnimatePresence>
-      {isLoading && (
-        <div className="w-full max-w-2xl mx-auto">
-          <Card>
-            <CardContent className="p-12 flex flex-col items-center justify-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary" />
-              <p className="mt-4 text-muted-foreground">Generating questions...</p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
+      <div className="relative h-[420px] overflow-hidden">
+        <AnimatePresence initial={false} custom={direction}>
+          <motion.div
+            key={currentStep}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: 'spring', stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            className="w-full absolute"
+          >
+            {currentStep === 1 && <Step1 onAnswer={handleAnswer} value={symptom} />}
+            {currentStep === 2 && dynamicQuestions[0] && <Step2 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[0]} />}
+            {currentStep === 3 && dynamicQuestions[1] && <Step3 onAnswer={handleAnswer} answers={answers} question={dynamicQuestions[1]} />}
+          </motion.div>
+        </AnimatePresence>
+        {isLoading && (
+          <div className="w-full max-w-2xl mx-auto">
+            <Card>
+              <CardContent className="p-12 flex flex-col items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <p className="mt-4 text-muted-foreground">Generating questions...</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
 
       <div className="fixed bottom-0 left-0 w-full bg-background border-t p-4">
         <div className="container flex justify-between items-center">
