@@ -12,4 +12,4 @@ export const ai = genkit({
   ],
 });
 
-export const geminiPro = ai.model('googleai/gemini-pro');
+export const geminiPro = 'googleai/gemini-pro';
