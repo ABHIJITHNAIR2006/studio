@@ -9,7 +9,6 @@ import Step1 from '@/components/triage/step-1';
 import Step2 from '@/components/triage/step-2';
 import Step3 from '@/components/triage/step-3';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
 import { triageQuestions } from '@/lib/data';
 
 const totalSteps = 3;
@@ -18,10 +17,8 @@ export default function TriagePage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState<Record<string, { value: number, isCritical?: boolean }>>({});
   const [direction, setDirection] = useState(1);
-  const [criticalToastShown, setCriticalToastShown] = useState(false);
   const router = useRouter();
   const { setTriageResult } = useAuth();
-  const { toast } = useToast();
 
   const handleNext = () => {
     setDirection(1);
@@ -41,15 +38,6 @@ export default function TriagePage() {
 
   const handleAnswer = (questionId: string, option: { text: string; value: number; isCritical?: boolean }) => {
     setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
-    if (option.isCritical && !criticalToastShown) {
-      toast({
-        variant: 'critical',
-        title: 'Critical Symptom Detected',
-        description: 'Your response indicates a potentially serious condition. Please continue to provide information.',
-        duration: 8000,
-      });
-      setCriticalToastShown(true);
-    }
   };
 
   const isNextDisabled = () => {
