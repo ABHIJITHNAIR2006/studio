@@ -22,6 +22,10 @@ export const symptoms: Symptom[] = [
   { id: '16', name: 'Joint pain' },
   { id: '17', name: 'Rash' },
   { id: '18', name: 'Other' },
+  { id: '19', name: 'Chills' },
+  { id: '20', name: 'Body Aches' },
+  { id: '21', name: 'Lost of Smell' },
+  { id: '22', name: 'Loss of Taste' },
 ];
 
 export type TriageQuestion = {
@@ -31,6 +35,7 @@ export type TriageQuestion = {
   options: {
     text: string;
     value: number;
+    description?: string;
     isCritical?: boolean;
   }[];
 };
@@ -41,9 +46,22 @@ export const triageQuestions: TriageQuestion[] = [
     text: 'How would you rate the severity of your symptom?',
     type: 'severity',
     options: [
-      { text: 'Mild', value: 1 },
-      { text: 'Moderate', value: 3 },
-      { text: 'Severe', value: 5, isCritical: true },
+      {
+        text: 'Mild',
+        value: 1,
+        description: 'Noticeable but not interfering with daily activities',
+      },
+      {
+        text: 'Moderate',
+        value: 3,
+        description: 'Interfering with some daily activities',
+      },
+      {
+        text: 'Severe',
+        value: 5,
+        isCritical: true,
+        description: 'Significantly impacting daily activities',
+      },
     ],
   },
   {

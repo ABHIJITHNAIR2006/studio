@@ -28,9 +28,6 @@ export default function TriagePage() {
     setDirection(1);
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
-      if (currentStep === 1) {
-        setCurrentStep(2);
-      }
     } else {
       handleSubmit();
     }
@@ -48,9 +45,9 @@ export default function TriagePage() {
   };
   
   const handleSymptomSelect = (selectedSymptom: {text: string, value: number}) => {
-    handleAnswer('symptom', selectedSymptom)
+    handleAnswer('symptom', selectedSymptom);
     setSymptom(selectedSymptom.text);
-    setCurrentStep(2);
+    handleNext();
   };
 
   const isNextDisabled = () => {
@@ -94,7 +91,7 @@ export default function TriagePage() {
         return <Step1 onAnswer={handleAnswer} value={symptom?.toLowerCase()} onSymptomSelect={handleSymptomSelect} />;
       case 2:
         if (questions[0]) {
-          return <Step2 onAnswer={handleAnswer} answers={answers} question={questions[0]} />;
+          return <Step2 onAnswer={handleAnswer} answers={answers} question={questions[0]} symptom={symptom} />;
         }
         return null;
       case 3:
@@ -133,7 +130,7 @@ export default function TriagePage() {
       </div>
 
       <div className="fixed bottom-0 left-0 w-full bg-background border-t p-4">
-        <div className="container flex justify-between items-center">
+        <div className="container flex justify-between items-center max-w-2xl mx-auto">
           <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}>
             Back
           </Button>
