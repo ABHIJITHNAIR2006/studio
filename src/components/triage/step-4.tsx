@@ -55,3 +55,4 @@ export default function Step4({ onAnswer, answers, question }: Step4Props) {
       </div>
     );
   }
+    
