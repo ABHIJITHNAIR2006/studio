@@ -26,12 +26,17 @@ export const symptoms: Symptom[] = [
   { id: '20', name: 'Body Aches' },
   { id: '21', name: 'Lost of Smell' },
   { id: '22', name: 'Loss of Taste' },
+  { id: '23', name: 'Runny Nose' },
+  { id: '24', name: 'Sneezing' },
+  { id: '25', name: 'Watery Eyes' },
+  { id: '26', name: 'Itchy Eyes' },
+  { id: '27', name: 'Muscle Pain' },
 ];
 
 export type TriageQuestion = {
   id: string;
   text: string;
-  type: 'severity' | 'yes_no' | 'checkbox';
+  type: 'severity' | 'yes_no' | 'checkbox' | 'duration';
   options: {
     text: string;
     value: number;
@@ -82,6 +87,19 @@ export const triageQuestions: TriageQuestion[] = [
   },
   {
     id: 'q4',
+    text: 'When did your symptoms start?',
+    type: 'duration',
+    options: [
+        { text: 'Less than 1 hour ago', value: 5 },
+        { text: 'A few hours ago', value: 4 },
+        { text: 'Earlier today', value: 3 },
+        { text: 'Yesterday', value: 2 },
+        { text: 'A few days ago', value: 1 },
+        { text: 'A week or more ago', value: 1 },
+    ],
+  },
+  {
+    id: 'q5',
     text: 'Have you experienced this primary symptom before?',
     type: 'yes_no',
     options: [

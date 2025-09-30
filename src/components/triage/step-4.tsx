@@ -3,6 +3,8 @@
 import { TriageQuestion } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 type Step4Props = {
   onAnswer: (questionId: string, option: { text: string; value: number; isCritical?: boolean }) => void;
@@ -11,32 +13,46 @@ type Step4Props = {
 };
 
 export default function Step4({ onAnswer, answers, question }: Step4Props) {
-  return (
-    <div className="w-full max-w-2xl mx-auto space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>{question.text}</CardTitle>
-          <CardDescription>Please answer yes or no.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            {question.options.map((option) => (
-              <button
-                key={option.text}
-                onClick={() => onAnswer(question.id, option)}
-                className={cn(
-                  'p-4 rounded-lg border-2 text-center transition-all duration-200 transform hover:scale-105',
-                  answers[question.id]?.value === option.value
-                    ? 'border-primary bg-primary/10 shadow-md'
-                    : 'border-border hover:border-primary/50'
-                )}
-              >
-                <span className="text-md font-medium">{option.text}</span>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+    const selectedValue = answers[question.id]?.text;
+    
+    return (
+      <div className="w-full max-w-2xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">
+              {question.text}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RadioGroup 
+                onValueChange={(value) => {
+                    const selectedOption = question.options.find(opt => opt.text === value);
+                    if(selectedOption) {
+                        onAnswer(question.id, selectedOption)
+                    }
+                }}
+                value={selectedValue}
+                className="space-y-3"
+            >
+              {question.options.map((option) => (
+                <Label
+                    key={option.text}
+                    htmlFor={option.text}
+                    className={cn(
+                        'flex items-center space-x-3 rounded-lg border-2 p-4 cursor-pointer transition-all duration-200',
+                        selectedValue === option.text
+                        ? 'border-primary bg-primary/10 shadow-lg'
+                        : 'border-border hover:border-primary/50'
+                    )}
+                >
+                  <RadioGroupItem value={option.text} id={option.text} />
+                  <span className="font-semibold text-base">{option.text}</span>
+                </Label>
+              ))}
+            </RadioGroup>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  

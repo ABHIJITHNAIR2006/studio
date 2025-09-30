@@ -9,11 +9,12 @@ import Step1 from '@/components/triage/step-1';
 import Step2 from '@/components/triage/step-2';
 import Step3 from '@/components/triage/step-3';
 import Step4 from '@/components/triage/step-4';
+import Step5 from '@/components/triage/step-5';
 import { Button } from '@/components/ui/button';
 import { triageQuestions } from '@/lib/data';
 import type { TriageQuestion } from '@/lib/data';
 
-const totalSteps = 4;
+const totalSteps = 5;
 
 export default function TriagePage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -62,8 +63,9 @@ export default function TriagePage() {
   const isNextDisabled = () => {
     if (currentStep === 1 && !symptom) return true;
     if (currentStep === 2 && !answers.q2) return true;
-    // Step 3 is optional, so no check needed
+    if (currentStep === 3 && !answers.q3) return true;
     if (currentStep === 4 && !answers.q4) return true;
+    if (currentStep === 5 && !answers.q5) return true;
     return false;
   };
 
@@ -75,9 +77,9 @@ export default function TriagePage() {
 
     const hasCritical = Object.values(answers).some(a => a.isCritical);
 
-    if (score > 6 || hasCritical) {
+    if (score > 8 || hasCritical) {
       careLevel = 'Red';
-    } else if (score > 3) {
+    } else if (score > 4) {
       careLevel = 'Yellow';
     }
 
@@ -117,6 +119,11 @@ export default function TriagePage() {
       case 4:
         if (questions[2]) {
           return <Step4 onAnswer={handleAnswer} answers={answers} question={questions[2]} />;
+        }
+        return null;
+      case 5:
+        if (questions[3]) {
+            return <Step5 onAnswer={handleAnswer} answers={answers} question={questions[3]} />;
         }
         return null;
       default:
