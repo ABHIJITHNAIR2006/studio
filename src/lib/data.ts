@@ -41,7 +41,7 @@ export const symptoms: Symptom[] = [
 export type TriageQuestion = {
   id: string;
   text: string;
-  type: 'severity' | 'yes_no' | 'checkbox' | 'duration';
+  type: 'severity' | 'yes_no' | 'checkbox' | 'duration' | 'radio';
   options: {
     text: string;
     value: number;
@@ -91,12 +91,16 @@ export const triageQuestions: TriageQuestion[] = [
     ]
   },
   {
-    id: 'q5',
-    text: 'Have you experienced this primary symptom before?',
-    type: 'yes_no',
+    id: 'q4',
+    text: 'When did your symptoms start?',
+    type: 'radio',
     options: [
-      { text: 'Yes', value: 1 },
-      { text: 'No', value: 0 },
+      { text: 'Less than 1 hour ago', value: 1 },
+      { text: 'A few hours ago', value: 2 },
+      { text: 'Earlier today', value: 3 },
+      { text: 'Yesterday', value: 4 },
+      { text: 'A few days ago', value: 5 },
+      { text: 'A week or more ago', value: 6 },
     ],
   },
 ];

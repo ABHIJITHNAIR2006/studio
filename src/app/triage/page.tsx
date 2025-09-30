@@ -8,7 +8,7 @@ import { ProgressBar } from '@/components/triage/progress-bar';
 import Step1 from '@/components/triage/step-1';
 import Step2 from '@/components/triage/step-2';
 import Step3 from '@/components/triage/step-3';
-import Step5 from '@/components/triage/step-5';
+import Step4 from '@/components/triage/step-4';
 import { Button } from '@/components/ui/button';
 import { triageQuestions } from '@/lib/data';
 import type { TriageQuestion } from '@/lib/data';
@@ -63,7 +63,7 @@ export default function TriagePage() {
     if (currentStep === 1 && !symptom) return true;
     if (currentStep === 2 && !answers.q2) return true;
     if (currentStep === 3 && !answers.q3) return true;
-    if (currentStep === 4 && !answers.q5) return true;
+    if (currentStep === 4 && !answers.q4) return true;
     return false;
   };
 
@@ -116,7 +116,7 @@ export default function TriagePage() {
         return null;
       case 4:
         if (questions[2]) {
-            return <Step5 onAnswer={handleAnswer} answers={answers} question={questions[2]} />;
+            return <Step4 onAnswer={handleAnswer} answers={answers} question={questions[2]} />;
         }
         return null;
       default:
@@ -155,7 +155,7 @@ export default function TriagePage() {
             Previous
           </Button>
           <Button onClick={handleNext} disabled={isNextDisabled()}>
-            {currentStep === totalSteps ? 'Finish & See Results' : 'Next'}
+            {currentStep === totalSteps ? 'Get Results' : 'Next'}
           </Button>
         </div>
       </div>
