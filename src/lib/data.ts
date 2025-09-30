@@ -20,22 +20,22 @@ export const symptoms: Symptom[] = [
   { id: '14', name: 'Dizziness' },
   { id: '15', name: 'Back pain' },
   { id: '16', name: 'Joint pain' },
-  { id_17: "17", name: "Rash" },
-  { id_18: "18", name: "Other" },
-  { id_19: "19", name: "Chills" },
-  { id_20: "20", name: "Body Aches" },
-  { id_21: "21", name: "Lost of Smell" },
-  { id_22: "22", name: "Loss of Taste" },
-  { id_23: "23", name: "Runny Nose" },
-  { id_24: "24", name: "Sneezing" },
-  { id_25: "25", name: "Watery Eyes" },
-  { id_26: "26", name: "Itchy Eyes" },
-  { id_27: "27", name: "Muscle Pain" },
-  { id: "28", name: "Pinkeye" },
-  { id: "29", name: "Earache" },
-  { id: "30", name: "Cold" },
-  { id: "31", name: "Stomachache" },
-  { id: "32", name: "Constipation" },
+  { id: '17', name: 'Rash' },
+  { id: '18', name: 'Other' },
+  { id: '19', name: 'Chills' },
+  { id: '20', name: 'Body Aches' },
+  { id: '21', name: 'Lost of Smell' },
+  { id: '22', name: 'Loss of Taste' },
+  { id: '23', name: 'Runny Nose' },
+  { id: '24', name: 'Sneezing' },
+  { id: '25', name: 'Watery Eyes' },
+  { id: '26', name: 'Itchy Eyes' },
+  { id: '27', name: 'Muscle Pain' },
+  { id: '28', name: 'Pinkeye' },
+  { id: '29', name: 'Earache' },
+  { id: '30', name: 'Cold' },
+  { id: '31', name: 'Stomachache' },
+  { id: '32', name: 'Constipation' },
 ];
 
 export type TriageQuestion = {
@@ -105,12 +105,12 @@ export const triageQuestions: TriageQuestion[] = [
   },
 ];
 
-
 export type Recommendation = {
   careLevel: 'Green' | 'Yellow' | 'Red';
   title: string;
   description: string;
   nextSteps: string[];
+  homeCare?: { [symptom: string]: string[] };
 };
 
 export const recommendations: { [key: string]: Recommendation } = {
@@ -119,11 +119,43 @@ export const recommendations: { [key: string]: Recommendation } = {
     title: 'Low Severity',
     description: 'Your symptoms appear to be mild. Home care is likely sufficient.',
     nextSteps: [
-      'Rest and drink plenty of fluids.',
-      'Monitor your symptoms.',
-      'Use over-the-counter medication if necessary.',
-      'Consult a doctor if symptoms worsen.',
+      'Monitor your symptoms and consult a doctor if they worsen or do not improve after a few days.',
+      'Rest and drink plenty of fluids to stay hydrated.',
     ],
+    homeCare: {
+      default: [
+        'Use over-the-counter medication like ibuprofen or acetaminophen if needed for pain or fever, following package instructions.',
+      ],
+      Headache: [
+        'Rest in a quiet, dark room.',
+        'Apply a cold compress to your forehead.',
+        'Gently massage your neck and shoulders.',
+        'Stay hydrated by drinking water.',
+      ],
+      Fever: [
+        'Take a lukewarm bath.',
+        'Dress in light clothing.',
+        'Use a fan to circulate air.',
+        'Drink plenty of fluids like water, broth, or electrolyte drinks.',
+      ],
+      Cough: [
+        'Use a humidifier or take a steamy shower to ease your throat.',
+        'Sip on warm tea with honey and lemon.',
+        'Gargle with salt water.',
+        'Avoid irritants like smoke and strong fumes.',
+      ],
+      'Sore throat': [
+        'Gargle with warm salt water several times a day.',
+        'Drink warm liquids like tea with honey.',
+        'Use throat lozenges or sprays.',
+        'Avoid acidic or spicy foods that can irritate your throat.',
+      ],
+      Diarrhea: [
+        'Stick to a BRAT diet (bananas, rice, applesauce, toast).',
+        'Drink clear fluids to prevent dehydration.',
+        'Avoid dairy, fatty foods, and caffeine.',
+      ],
+    },
   },
   Yellow: {
     careLevel: 'Yellow',

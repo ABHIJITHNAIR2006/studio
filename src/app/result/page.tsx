@@ -5,7 +5,7 @@ import { recommendations } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Download, Video } from 'lucide-react';
+import { CheckCircle2, Download, Video, HeartPulse } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
@@ -17,7 +17,7 @@ export default function ResultPage() {
     return null;
   }
 
-  const { careLevel } = triageResult;
+  const { careLevel, symptom } = triageResult;
   const resultData = recommendations[careLevel];
 
   const badgeClass = {
@@ -37,6 +37,14 @@ export default function ResultPage() {
     router.push('/');
   };
 
+  let homeCareSteps: string[] = [];
+  if (careLevel === 'Green' && resultData.homeCare) {
+    if (symptom && resultData.homeCare[symptom]) {
+      homeCareSteps = resultData.homeCare[symptom];
+    } else {
+      homeCareSteps = resultData.homeCare.default || [];
+    }
+  }
   const nextSteps = resultData.nextSteps;
 
   return (
@@ -70,6 +78,23 @@ export default function ResultPage() {
                   ))}
                 </ul>
             </div>
+            
+            {homeCareSteps.length > 0 && (
+              <div className="animate-fade-in-slide-up" style={{ animationDelay: '0.8s', animationFillMode: 'backwards' }}>
+                <h3 className="font-semibold text-lg mb-4 flex items-center">
+                  <HeartPulse className="h-5 w-5 mr-2 text-primary" />
+                  Home Care for {symptom}
+                </h3>
+                <ul className="space-y-3 list-none bg-accent/20 p-4 rounded-lg border border-accent/30">
+                  {homeCareSteps.map((step, index) => (
+                    <li key={index} className="flex items-start">
+                      <CheckCircle2 className="h-5 w-5 text-success mr-3 mt-0.5 flex-shrink-0" />
+                      <span>{step}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Button

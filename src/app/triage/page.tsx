@@ -41,22 +41,22 @@ export default function TriagePage() {
     }
   };
 
-  const handleAnswer = (questionId: string, option: { text: string; value: number; isCritical?: boolean } | string[]) => {
-    if (Array.isArray(option)) {
-      const isCritical = additionalSymptoms.some(s => option.includes(s.text) && s.isCritical);
-      setAnswers((prev) => ({ 
-        ...prev, 
-        [questionId]: { value: option.length * 2, isCritical }
-      }));
-    } else {
-      setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
-    }
-  };
-  
   const handleSymptomSelect = (selectedSymptom: {text: string, value: number}) => {
     handleAnswer('symptom', selectedSymptom);
     setSymptom(selectedSymptom.text);
     handleNext();
+  };
+  
+  const handleAnswer = (questionId: string, option: { text: string; value: number; isCritical?: boolean } | string[]) => {
+    if (Array.isArray(option)) { // Checkbox for step 3
+      const isCritical = additionalSymptoms.some(s => option.includes(s.text) && s.isCritical);
+      setAnswers((prev) => ({ 
+        ...prev, 
+        [questionId]: { value: option.length * 2, text: option, isCritical }
+      }));
+    } else { // Radio or other inputs
+      setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, text: option.text, isCritical: option.isCritical } }));
+    }
   };
 
   const isNextDisabled = () => {
@@ -75,9 +75,9 @@ export default function TriagePage() {
 
     const hasCritical = Object.values(answers).some(a => a.isCritical);
 
-    if (score > 8 || hasCritical) {
+    if (score > 10 || hasCritical) {
       careLevel = 'Red';
-    } else if (score > 4) {
+    } else if (score > 5) {
       careLevel = 'Yellow';
     }
 
@@ -103,7 +103,7 @@ export default function TriagePage() {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <Step1 onAnswer={handleAnswer} value={symptom?.toLowerCase()} onSymptomSelect={handleSymptomSelect} />;
+        return <Step1 onSymptomSelect={handleSymptomSelect} />;
       case 2:
         if (questions[0]) {
           return <Step2 onAnswer={handleAnswer} answers={answers} question={questions[0]} symptom={symptom} />;
