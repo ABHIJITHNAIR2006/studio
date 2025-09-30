@@ -1,7 +1,7 @@
 'use client';
 
 import { TriageQuestion } from '@/lib/data';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -55,4 +55,3 @@ export default function Step4({ onAnswer, answers, question }: Step4Props) {
       </div>
     );
   }
-  
