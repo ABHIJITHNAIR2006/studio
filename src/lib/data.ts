@@ -31,7 +31,7 @@ export const symptoms: Symptom[] = [
 export type TriageQuestion = {
   id: string;
   text: string;
-  type: 'severity' | 'yes_no';
+  type: 'severity' | 'yes_no' | 'checkbox';
   options: {
     text: string;
     value: number;
@@ -59,14 +59,30 @@ export const triageQuestions: TriageQuestion[] = [
       {
         text: 'Severe',
         value: 5,
-        isCritical: true,
         description: 'Significantly impacting daily activities',
       },
     ],
   },
   {
     id: 'q3',
-    text: 'Have you experienced this symptom before?',
+    text: 'Do you have any of these additional symptoms?',
+    type: 'checkbox',
+    options: [
+      { text: 'Shortness of breath', value: 2, isCritical: true },
+      { text: 'Rapid heartbeat', value: 2 },
+      { text: 'High fever (>101°F)', value: 2 },
+      { text: 'Severe headache', value: 2, isCritical: true },
+      { text: 'Confusion', value: 2, isCritical: true },
+      { text: 'Loss of consciousness', value: 2, isCritical: true },
+      { text: 'Severe bleeding', value: 2, isCritical: true },
+      { text: 'Difficulty swallowing', value: 2, isCritical: true },
+      { text: 'Severe allergic reaction', value: 2, isCritical: true },
+      { text: 'Chest tightness', value: 2, isCritical: true },
+    ]
+  },
+  {
+    id: 'q4',
+    text: 'Have you experienced this primary symptom before?',
     type: 'yes_no',
     options: [
       { text: 'Yes', value: 1 },

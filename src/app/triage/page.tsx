@@ -8,15 +8,16 @@ import { ProgressBar } from '@/components/triage/progress-bar';
 import Step1 from '@/components/triage/step-1';
 import Step2 from '@/components/triage/step-2';
 import Step3 from '@/components/triage/step-3';
+import Step4 from '@/components/triage/step-4';
 import { Button } from '@/components/ui/button';
 import { triageQuestions } from '@/lib/data';
 import type { TriageQuestion } from '@/lib/data';
 
-const totalSteps = 3;
+const totalSteps = 4;
 
 export default function TriagePage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [answers, setAnswers] = useState<Record<string, { value: number, isCritical?: boolean }>>({});
+  const [answers, setAnswers] = useState<Record<string, any>>({});
   const [direction, setDirection] = useState(1);
   const router = useRouter();
   const { setTriageResult } = useAuth();
@@ -40,8 +41,16 @@ export default function TriagePage() {
     }
   };
 
-  const handleAnswer = (questionId: string, option: { text: string; value: number; isCritical?: boolean }) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
+  const handleAnswer = (questionId: string, option: { text: string; value: number; isCritical?: boolean } | string[]) => {
+    if (Array.isArray(option)) {
+      const isCritical = additionalSymptoms.some(s => option.includes(s.text) && s.isCritical);
+      setAnswers((prev) => ({ 
+        ...prev, 
+        [questionId]: { value: option.length * 2, isCritical }
+      }));
+    } else {
+      setAnswers((prev) => ({ ...prev, [questionId]: { value: option.value, isCritical: option.isCritical } }));
+    }
   };
   
   const handleSymptomSelect = (selectedSymptom: {text: string, value: number}) => {
@@ -53,14 +62,20 @@ export default function TriagePage() {
   const isNextDisabled = () => {
     if (currentStep === 1 && !symptom) return true;
     if (currentStep === 2 && !answers.q2) return true;
-    if (currentStep === 3 && !answers.q3) return true;
+    // Step 3 is optional, so no check needed
+    if (currentStep === 4 && !answers.q4) return true;
     return false;
   };
+
+  const additionalSymptoms = triageQuestions[1].options;
 
   const handleSubmit = () => {
     const score = Object.values(answers).reduce((acc, answer) => acc + (answer.value || 0), 0);
     let careLevel: 'Green' | 'Yellow' | 'Red' = 'Green';
-    if (score > 6 || Object.values(answers).some(a => a.isCritical)) {
+
+    const hasCritical = Object.values(answers).some(a => a.isCritical);
+
+    if (score > 6 || hasCritical) {
       careLevel = 'Red';
     } else if (score > 3) {
       careLevel = 'Yellow';
@@ -99,6 +114,11 @@ export default function TriagePage() {
           return <Step3 onAnswer={handleAnswer} answers={answers} question={questions[1]} />;
         }
         return null;
+      case 4:
+        if (questions[2]) {
+          return <Step4 onAnswer={handleAnswer} answers={answers} question={questions[2]} />;
+        }
+        return null;
       default:
         return null;
     }
@@ -132,7 +152,7 @@ export default function TriagePage() {
       <div className="fixed bottom-0 left-0 w-full bg-background border-t p-4">
         <div className="container flex justify-between items-center max-w-2xl mx-auto">
           <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}>
-            Back
+            Previous
           </Button>
           <Button onClick={handleNext} disabled={isNextDisabled()}>
             {currentStep === totalSteps ? 'Finish & See Results' : 'Next'}
