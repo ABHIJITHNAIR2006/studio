@@ -20,7 +20,7 @@ export default function Step4({ onAnswer, answers, question }: Step4Props) {
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl font-bold">
-              {question.text}
+              When did your symptoms start?
             </CardTitle>
           </CardHeader>
           <CardContent>
