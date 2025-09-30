@@ -20,6 +20,7 @@ interface AuthContextType {
   logout: () => void;
   triageResult: TriageResult | null;
   setTriageResult: (result: TriageResult | null) => void;
+  clearTriageResult: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -62,6 +63,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sessionStorage.removeItem('triage-result');
   };
 
+  const clearTriageResult = () => {
+    setTriageResult(null);
+    sessionStorage.removeItem('triage-result');
+  };
+
   const handleSetTriageResult = (result: TriageResult | null) => {
     setTriageResult(result);
     if (result) {
@@ -78,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     triageResult,
     setTriageResult: handleSetTriageResult,
+    clearTriageResult,
   };
 
   if (loading) {

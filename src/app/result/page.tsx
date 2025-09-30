@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 export default function ResultPage() {
-  const { triageResult, logout } = useAuth();
+  const { triageResult, clearTriageResult } = useAuth();
   const router = useRouter();
 
   if (!triageResult) {
@@ -33,7 +33,7 @@ export default function ResultPage() {
   };
 
   const handleFinish = () => {
-    logout();
+    clearTriageResult();
     router.push('/');
   };
 
