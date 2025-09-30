@@ -14,6 +14,14 @@ export const symptoms: Symptom[] = [
   { id: '8', name: 'Vomiting' },
   { id: '9', name: 'Diarrhea' },
   { id: '10', name: 'Fatigue' },
+  { id: '11', name: 'Difficulty breathing' },
+  { id: '12', name: 'Abdominal pain' },
+  { id: '13', name: 'Nausea/Vomiting' },
+  { id: '14', name: 'Dizziness' },
+  { id: '15', name: 'Back pain' },
+  { id: '16', name: 'Joint pain' },
+  { id: '17', name: 'Rash' },
+  { id: '18', name: 'Other' },
 ];
 
 export type TriageQuestion = {
